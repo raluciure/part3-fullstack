@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 require('dotenv').config()
 const express = require('express')
 const app = express()
@@ -11,7 +12,7 @@ app.use(cors())
 
 app.use(express.static('dist'))
 
-const Person = require('./models/person')
+const Person = require('./models/person').default
 
 morgan.token('postResponse', (request) => JSON.stringify(request.body));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :postResponse'));
@@ -41,7 +42,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id)
-        .then(result => {
+        .then(() => {
             response.status(204).end()
         })
         .catch(error => next(error))
@@ -120,6 +121,7 @@ const errorHandler = (error, request, response, next) => {
 
 app.use(errorHandler)
 
+ 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
